@@ -5,11 +5,18 @@ var bodyParser = require('koa-bodyparser');
 var app = new Koa();
 var router = new Router();
 
+var IpLookup = require('./data/ip-lookup');
+
 router.post('/ip', async (ctx, next) => {
-  // ctx.router available
-  console.log(ctx.request.body);
-  ctx.status = 200;
-  ctx.body = null;
+  try {
+    await IpLookup.insert(ctx.request.body);
+    ctx.status = 200;
+    ctx.body = null;
+  } catch (e) {
+    ctx.status = 500;
+    ctx.body = e;
+  }
+
   await next();
 });
 
